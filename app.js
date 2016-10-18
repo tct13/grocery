@@ -11,7 +11,7 @@ app.use('/customers', customer_routes)
 app.set('view engine', 'ejs')
 
 
-app.listen(port)
+app.listen(process.env.PORT || port)
 console.log('localhost running on port '+ port)
 
 
