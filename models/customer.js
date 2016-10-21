@@ -46,56 +46,39 @@ customerSchema.post('save', function () {
 
 
 customerSchema.methods.authenticate = function( loginPassword, callback ) {
-  var hashedPassword = this.local.password
 
+    console.log('given password is ' + loginPassword)
+    console.log('saved password is ' + this.local.password)
 
-
-// notcompleted
-  // bcrypt.compare( loginPassword, hashedPassword, function (err, authenticatedOrNot) {
-  //   if (authenticatedOrNot)
-  //
-  //
-  // })
-
-
-
-
-
+    bcrypt.compare( loginPassword, this.local.password, function (err, isMatch) {
+      callback(err, isMatch)
+    })
 }
-
-
-
-
-
-
 
 
 var Customer = mongoose.model('Customer', customerSchema)
 
 
-
-
 // dummy data below for testing!!!!!!!
-var newC = new Customer(
-  {
-
-    name: 'assssss',
-    local: {
-      email: 'xxx@gmail.com',
-      password: 'test123',
-    },
-    billingAddress: '1 street',
-    deliveryAddress: '2 street',
-    phoneNumber: 123456,
-
-  }
-)
-
-newC.save(function (err) {
-  if (err) console.log(err.message)
-  // console.log('new user saved')
-})
-
+// var newC = new Customer(
+//   {
+//
+//     name: 'assssss',
+//     local: {
+//       email: 'xxx@gmail.com',
+//       password: 'test123',
+//     },
+//     billingAddress: '1 street',
+//     deliveryAddress: '2 street',
+//     phoneNumber: 123456,
+//
+//   }
+// )
+//
+// newC.save(function (err) {
+//   if (err) console.log(err.message)
+//   // console.log('new user saved')
+// })
 
 
 module.exports = Customer
