@@ -2,6 +2,8 @@ var express = require('express')
 var router = express.Router()
 var passport = require('passport')
 var Customer = require('../models/customer')
+var Product = require('../models/product')
+
 
 
 // below is the helper function to check that the customer is already logged in on the customer/signup page
@@ -115,8 +117,28 @@ router.route ('/login')
 
 router.get('/profile', function (req, res) {
     // res.send(req.user.id)
-    console.log('I am now showing req.body : ' + req.user)
-    res.render('customers/profile', { message: req.flash('loginMessage') })
+    console.log('I am now showing req.user : ' + req.user)
+    res.render('customers/profile', {
+      customerData: req.user,
+      message: req.flash('loginMessage'),
+    })
+})
+
+router.get('/product', function (req, res) {
+    console.log('Shopping now')
+
+    Product.find( {}, function (err, allProduct ) {
+      res.render('customers/product', {
+        allProducts: allProduct,
+      })
+    })
+})
+
+
+router.get('/productPage', function (req, res) {
+  res.render('customers/productPage')
+
+
 })
 
 

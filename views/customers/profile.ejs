@@ -7,4 +7,32 @@
   </div>
 <% } %>
 
+
+<table class="table">
+
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Billing Address</th>
+    <th>Deivery Address</th>
+    <th>Phone Number</th>
+  </tr>
+
+    <tr>
+      <td> <%= customerData.name %> </td>
+      <td> <%= customerData.local.email %> </td>
+      <td> <%= customerData.billingAddress %> </td>
+      <td> <%= customerData.deliveryAddress %> </td>
+      <td> <%= customerData.phoneNumber %> </td>
+    </tr>
+
+ </table>
+
+  <br>
+  <a href="/customers/product">Shop Now</a>
+
+  <br>
+  <a href="/customers/cart">See My Cart</a>
+
+  <br>
   <a href="/customers/logout">Logout</a>

@@ -1,0 +1,31 @@
+<h1>Online Product Shopping Page </h1>
+
+
+
+// try to show user logged in via session here???
+
+
+<table class="table">
+
+  <tr>
+    <th>Product Name</th>
+    <th>Unit Price</th>
+    <th></th>
+  </tr>
+
+<% allProducts.forEach(function(products) { %>
+  <tr>
+      <td> <%= products.productName %> </td>
+      <br>
+      <td> <%= products.unitPrice %> </td>
+      <br>
+      <td> <a href="/customers/productPage">View Product Description</a> </td>
+
+  </tr>
+<% }) %>
+
+
+
+
+
+ </table>
