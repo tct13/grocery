@@ -1,37 +1,58 @@
 <h2>New Customer Form</h2>
-<form class="new_customer" method="POST" action="/customers/signup">
+
+<% if(message.length > 0) { %>
+  <h3>Flash Message Found</h3>
+  <div class="FlashMessage">
+    <%= message %>
+  </div>
+<% } %>
+
+
+<form class="navbar-form navbar-left" method="POST" action="/customers/signup">
 
   <div class="row">
 
-      <div class="customer_form">
+      <div class="form-group">
         <label for="name">Name: </label>
         <input type="text" name="newCustomer[name]" id="name" placeholder="Your name" class="u-full-width">
       </div>
 
-      <div class="customer_form">
+      <br>
+
+      <div class="form-group">
         <label for="email">Email: </label>
         <input type="text" name="newCustomer[local][email]" id="email" placeholder="Your email" class="u-full-width">
       </div>
 
-      <div class="customer_form">
+      <br>
+
+      <div class="form-group">
         <label for="password">Password: </label>
         <input type="text" name="newCustomer[local][password]" id="password" placeholder="Your password" class="u-full-width">
       </div>
 
-      <div class="customer_form">
+      <br>
+
+      <div class="form-group">
         <label for="bill_addr">Billing Address: </label>
         <input type="text" name="newCustomer[billingAddress]" id="bill_addr" placeholder="Your billing address" class="u-full-width">
       </div>
 
-      <div class="customer_form">
+      <br>
+
+      <div class="form-group">
         <label for="deli_addr">Delivery Address: </label>
         <input type="text" name="newCustomer[deliveryAddress]" id="deli_addr" placeholder="Your delivery address" class="u-full-width">
       </div>
+
+      <br>
 
       <div class="customer_form">
         <label for="phone">Phone Number: </label>
         <input type="text" name="newCustomer[phoneNumber]" id="phone" placeholder="Your phone" class="u-full-width">
       </div>
+
+      <br>
 
     <input type="submit" value='Save Customer Details'>
 

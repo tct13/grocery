@@ -1,8 +1,16 @@
 var express = require('express')
 var app = express()
-var port = 4000
+var port = 3000
 
-var customer_routes = require('./routes/customers')
+
+
+
+var flash = require('connect-flash')
+var session = require('express-session')
+var passport = require('passport')
+var MongoStore = require('connect-mongo')(session)
+
+
 
 var mongoose = require('mongoose')
 var dotenv = require('dotenv')
@@ -10,10 +18,39 @@ var dotenv = require('dotenv')
 var bodyParser = require('body-parser')
 var layout = require('express-ejs-layouts')
 
+require('./config/passport')(passport)
+
+var customer_routes = require('./routes/customers')
+
 mongoose.Promise = global.Promise
 console.log('the environment is on ' + process.env.NODE_ENV)
 dotenv.load({ path: '.env.' + process.env.NODE_ENV })
 mongoose.connect(process.env.MONGO_URI)
+
+
+
+
+
+
+app.set('view engine', 'ejs')
+app.use(layout)
+app.use(session({
+  secret: process.env.EXPRESS_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore({
+    url: process.env.MONGO_URI,
+    autoReconnect: true
+  })
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+app.use(flash())
+
+
+
 
 
 // if (process.env.NODE_ENV === 'production'){

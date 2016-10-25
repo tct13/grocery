@@ -45,7 +45,7 @@ customerSchema.post('save', function () {
 })
 
 
-customerSchema.methods.authenticate = function( loginPassword, callback ) {
+customerSchema.methods.auth = function( loginPassword, callback ) {
 
     console.log('given password is ' + loginPassword)
     console.log('saved password is ' + this.local.password)
