@@ -1,6 +1,5 @@
 var mongoose = require('mongoose')
 
-
 var Customer = require('./customer')
 var Product = require('./product')
 
@@ -10,18 +9,23 @@ var cartSchema = mongoose.Schema({
       type: Date,
       default: Date.now
     },
-    quantityBought: Number,
     totalSpend: Number,
-    customer:{
+    customerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Customer'
     },
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product'
-    },
+
+    productOrdered: [{
+
+          productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+          },
+          quantityOrdered: Number,
+    }]
+
 })
 
-var Cart = mongoose.model('Cart', receiptSchema)
+var Cart = mongoose.model('Cart', cartSchema)
 
 module.exports = Cart

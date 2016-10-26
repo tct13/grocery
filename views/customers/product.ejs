@@ -1,31 +1,36 @@
 <h1>Online Product Shopping Page </h1>
-
-
-
-// try to show user logged in via session here???
-
+<br>
 
 <table class="table">
 
   <tr>
     <th>Product Name</th>
     <th>Unit Price</th>
+    <th>State Quantity You Like to Order</th>
     <th></th>
   </tr>
+
+<form class="navbar-form navbar-left" method="POST" action="/customers/cart">
 
 <% allProducts.forEach(function(products) { %>
   <tr>
       <td> <%= products.productName %> </td>
-      <br>
       <td> <%= products.unitPrice %> </td>
-      <br>
+      <td>
+        <input type="number" name="quantityOrdered" placeholder="Quantity to order">
+      </td>
       <td> <a href="/customers/productPage">View Product Description</a> </td>
-
   </tr>
+  <input type="hidden" name="productId" value=<%=products._id%>>
 <% }) %>
 
+  <tr> </tr>
+  <tr> <input type="submit" value='Save My Order to Cart'> </tr>
 
+</form>
 
+</table>
 
-
- </table>
+ <br>
+ <br>
+ <a href="/customers/logout">Logout</a>

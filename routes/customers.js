@@ -1,8 +1,13 @@
 var express = require('express')
 var router = express.Router()
 var passport = require('passport')
+// var mongoose = require('mongoose')
+
 var Customer = require('../models/customer')
 var Product = require('../models/product')
+var Cart = require('../models/cart')
+
+
 
 
 
@@ -128,22 +133,72 @@ router.get('/product', function (req, res) {
     console.log('Shopping now')
 
     Product.find( {}, function (err, allProduct ) {
+
+      // console.log('all products are: '+ allProduct.productName)
+
       res.render('customers/product', {
         allProducts: allProduct,
       })
     })
 })
 
-
 router.get('/productPage', function (req, res) {
+  // console.log(req.body)
+  // console.log(res.params)
   res.render('customers/productPage')
-
-
 })
+
+
+router.post('/cart', function(req, res) {
+
+    console.log('yyyy ' + req.user.id)
+    console.log('tttttt' + req.body.productId + req.body.quantityOrdered)
+    // console.log('qqqqq ' + typeof(req.body.productOrdered) + ' '+ typeof (req.body))
+    // console.log('this is my req body ' + req.body)
+
+    var productArrayOfObjects = []
+    var totalAmount = 0
+
+    for (var i=0; i<req.body.productId.length; i++) {
+      var item = {
+        productId: req.body.productId[i],
+        quantityOrdered: req.body.quantityOrdered[i]
+      }
+      productArrayOfObjects.push(item);
+    }
+
+    console.log(productArrayOfObjects)
+
+    // Product.findById(req.body.productId,)
+
+
+
+
+
+    var newCart = new Cart ({
+
+        // totalSpend:
+        customerId: req.user.id,
+        // productId: []
+        productOrdered: productArrayOfObjects
+    })
+    // newCart.productId.push(req.body)
+
+    console.log('newCart is ' + newCart)
+    newCart.save(function (err) {
+            if (err) throw new Error(err)
+    })
+
+  })
+
+
+
+
 
 
 router.get('/logout', function (req, res) {
     req.logout()
+    console.log('Logging customer out')
     res.redirect('/customers/login')
 })
 
