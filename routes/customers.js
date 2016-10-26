@@ -152,37 +152,107 @@ router.get('/productPage', function (req, res) {
 router.post('/cart', function(req, res) {
 
     console.log('yyyy ' + req.user.id)
-    console.log('tttttt' + req.body.productId + req.body.quantityOrdered)
+    console.log('tttttt' + req.body.quantityOrdered)
     // console.log('qqqqq ' + typeof(req.body.productOrdered) + ' '+ typeof (req.body))
     // console.log('this is my req body ' + req.body)
 
     var productArrayOfObjects = []
     var totalAmount = 0
+    var quantityArray =[]
+    var priceArray = []
+    var productIdArray = []
+
+
+
+      // console.log('this is my product id ' + req.body.productId)
+
+    //  var productIdArray= [req.body.productId]
+
+
+    for (var j=0; j<req.body.productId.length; j++) {
+
+      console.log(req.body.productId[j])
+      productIdArray.push(req.body.productId[j])
+      console.log('this is my productIdArrray ' + productIdArray)
+      console.log(typeof(productIdArray))
+
+
+
+
+      quantityArray.push(parseInt(req.body.quantityOrdered[j]))
+      console.log('qty array ' + quantityArray)
+      console.log(typeof(quantityArray[j]))
+
+
+    }
+
+
+
+    Product.find( {'_id': {'$in': productIdArray} }, function(err, productData){
+
+      // console.log('qty ordered '+ parseInt( req.body.quantityOrdered[j] ))
+
+      // console.log('unit price ' + typeof(productData.unitPrice) )
+      // console.log('unit price ' + productData.unitPrice)
+
+      // console.log('qty array ' + quantityArray[j])
+      // console.log('req.body qty ' + parseInt(req.body.quantityOrdered[j]))
+      console.log('productData ' + productData)
+
+      productData.forEach(function(productData, quantityArray) {
+
+        console.log('unit price ' + productData.unitPrice)
+        console.log('qty ' + quantityArray)
+
+        totalAmount += (productData.unitPrice * quantityArray)
+        console.log(totalAmount)
+
+      })
+
+      // priceArray.push( productData.unitPrice )
+      // console.log('xxxxx price array ' + priceArray)
+
+
+
+      // var price = 0
+      // price = quantityArray[j] * productData.unitPrice
+      //
+      // console.log(typeof(price))
+      // console.log('what is the current price : '+price)
+      // totalAmount = totalAmount+price
+      // console.log('total amount now '+ totalAmount)
+
+      totalAmount += (quantityArray[j]*priceArray[j])
+      console.log('total amount now '+ totalAmount)
+
+    })
+
+
+
+
 
     for (var i=0; i<req.body.productId.length; i++) {
+
       var item = {
         productId: req.body.productId[i],
         quantityOrdered: req.body.quantityOrdered[i]
       }
       productArrayOfObjects.push(item);
+
     }
 
     console.log(productArrayOfObjects)
-
-    // Product.findById(req.body.productId,)
 
 
 
 
 
     var newCart = new Cart ({
-
         // totalSpend:
         customerId: req.user.id,
-        // productId: []
         productOrdered: productArrayOfObjects
     })
-    // newCart.productId.push(req.body)
+
 
     console.log('newCart is ' + newCart)
     newCart.save(function (err) {
