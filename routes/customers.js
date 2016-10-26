@@ -151,22 +151,16 @@ router.get('/productPage', function (req, res) {
 
 router.post('/cart', function(req, res) {
 
-    console.log('yyyy ' + req.user.id)
+    // console.log('yyyy ' + req.user.id)
     console.log('tttttt' + req.body.quantityOrdered)
-    // console.log('qqqqq ' + typeof(req.body.productOrdered) + ' '+ typeof (req.body))
+    // console.log('this is my product id ' + req.body.productId)
     // console.log('this is my req body ' + req.body)
 
     var productArrayOfObjects = []
     var totalAmount = 0
     var quantityArray =[]
-    var priceArray = []
     var productIdArray = []
-
-
-
-      // console.log('this is my product id ' + req.body.productId)
-
-    //  var productIdArray= [req.body.productId]
+    // var priceArray = []
 
 
     for (var j=0; j<req.body.productId.length; j++) {
@@ -176,94 +170,55 @@ router.post('/cart', function(req, res) {
       console.log('this is my productIdArrray ' + productIdArray)
       console.log(typeof(productIdArray))
 
-
-
-
       quantityArray.push(parseInt(req.body.quantityOrdered[j]))
       console.log('qty array ' + quantityArray)
       console.log(typeof(quantityArray[j]))
 
-
     }
-
 
 
     Product.find( {'_id': {'$in': productIdArray} }, function(err, productData){
 
-      // console.log('qty ordered '+ parseInt( req.body.quantityOrdered[j] ))
-
-      // console.log('unit price ' + typeof(productData.unitPrice) )
-      // console.log('unit price ' + productData.unitPrice)
-
-      // console.log('qty array ' + quantityArray[j])
-      // console.log('req.body qty ' + parseInt(req.body.quantityOrdered[j]))
       console.log('productData ' + productData)
 
       productData.forEach(function(productData, quantityArray) {
 
         console.log('unit price ' + productData.unitPrice)
-        console.log('qty ' + quantityArray)
+        console.log('xxxxxx qty array ' + quantityArray)
+        // quantityArray is not been picked up!!!
 
         totalAmount += (productData.unitPrice * quantityArray)
-        console.log(totalAmount)
+        console.log('total amount now '+ totalAmount)
 
       })
 
-      // priceArray.push( productData.unitPrice )
-      // console.log('xxxxx price array ' + priceArray)
-
-
-
-      // var price = 0
-      // price = quantityArray[j] * productData.unitPrice
-      //
-      // console.log(typeof(price))
-      // console.log('what is the current price : '+price)
-      // totalAmount = totalAmount+price
+      // totalAmount += (quantityArray[j]*priceArray[j])
       // console.log('total amount now '+ totalAmount)
 
-      totalAmount += (quantityArray[j]*priceArray[j])
-      console.log('total amount now '+ totalAmount)
-
     })
-
-
-
 
 
     for (var i=0; i<req.body.productId.length; i++) {
 
-      var item = {
-        productId: req.body.productId[i],
-        quantityOrdered: req.body.quantityOrdered[i]
-      }
-      productArrayOfObjects.push(item);
-
+        var item = {
+          productId: req.body.productId[i],
+          quantityOrdered: req.body.quantityOrdered[i]
+        }
+        productArrayOfObjects.push(item);
     }
 
-    console.log(productArrayOfObjects)
-
-
-
-
+    console.log('productArrayOfObjects '  + productArrayOfObjects)
 
     var newCart = new Cart ({
-        // totalSpend:
+        totalSpend: totalAmount,
         customerId: req.user.id,
-        productOrdered: productArrayOfObjects
+        productOrdered: productArrayOfObjects,
     })
-
-
     console.log('newCart is ' + newCart)
     newCart.save(function (err) {
             if (err) throw new Error(err)
     })
-
   })
-
-
-
-
 
 
 router.get('/logout', function (req, res) {
@@ -271,6 +226,23 @@ router.get('/logout', function (req, res) {
     console.log('Logging customer out')
     res.redirect('/customers/login')
 })
+
+router.delete('/delete/:id', function (req, res) {
+
+    Customer.findByIdAndRemove(req.params.id, function(err, customerDelete){
+
+      if (err) throw new Error(err)
+
+      console.log(req.params.id)
+
+      console.log('Deleting customer account')
+      res.redirect('/customers/signup')
+    })
+
+
+
+})
+
 
 
 router.get('/error', function (req, res) {

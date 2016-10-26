@@ -36,3 +36,10 @@
 
   <br>
   <a href="/customers/logout">Logout</a>
+
+  <br>
+
+  <form method="POST" action="/customers/delete/<%=customerData.id%>" enctype="application/x-www-form-urlencoded">
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit">Delete My Account</button>
+  </form>
