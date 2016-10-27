@@ -25,6 +25,7 @@ dotenv.load({ path: '.env.' + process.env.NODE_ENV })
 mongoose.connect(process.env.MONGO_URI)
 console.log("ENV: ", process.env)
 
+app.use(express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 app.use(layout)
 app.use(session({
@@ -50,8 +51,7 @@ app.use(flash())
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(layout)
-app.use(express.static(__dirname + 'public'))
+
 
 
 

@@ -4,19 +4,50 @@
     <meta charset="utf-8">
     <title>Online Grocery</title>
 
-  </head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <link rel="stylesheet" href="/css/style.css">
-
   </head>
 
+
   <body>
-    <h1>Welcome to Grocery Online</h1>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project 2: Online Shopping / Grocery</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/customers/login">Login</a></li>
+            <li><a href="/customers/profile">Your Profile</a></li>
+            <li><a href="/customers/cart">Your Cart</a></li>
+            <li><a href="/customers/logout">Logout</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" method="POST" action="/customers/search">
+            <input type="text" class="form-control" name="query" placeholder="Search...">
+
+
+          </form>
+        </div>
+      </div>
+    </nav>
+    <br>
+    <br>
+    <br>
 
     <div class="container">
 
       <%- body %>
+
+    </div>
 
       <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 
@@ -24,6 +55,5 @@
 
       <script src="/js/script.js" charset="utf-8"></script>
 
-    </div>
   </body>
 </html>

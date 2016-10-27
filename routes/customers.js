@@ -7,17 +7,12 @@ var Customer = require('../models/customer')
 var Product = require('../models/product')
 var Cart = require('../models/cart')
 
-
-
-
-
 // below is the helper function to check that the customer is already logged in on the customer/signup page
 function CheckAlreadyLoggedIn (req, res, next) {
-
-  if ( req.isAuthenticated() ) {
+  if (req.isAuthenticated()) {
     req.flash('signupMessage', 'You have already logged in!')
 
-    console.log(" I am done with CheckAlreadyLoggedIn")
+    console.log(' I am done with CheckAlreadyLoggedIn')
 
     return res.redirect('/customers/profile')
   } else {
@@ -25,24 +20,22 @@ function CheckAlreadyLoggedIn (req, res, next) {
   }
 }
 
+router.get('/', function (req, res) {
+  Customer.find({}, function (err, allCustomers) {
+    if (err) throw new Error(err)
 
-router.get('/', function(req, res) {
-    Customer.find( {}, function (err, allCustomers ) {
-        if (err) throw new Error(err)
+    console.log(allCustomers)
 
-        console.log(allCustomers)
-
-        res.render('customers/index', {
-            allCustomers: allCustomers
-        })
+    res.render('customers/index', {
+      allCustomers: allCustomers
     })
+  })
 })
-
 
 router.route('/signup')
 
-    .get( CheckAlreadyLoggedIn, function (req, res) {
-      Customer.find( {}, function (err, allCustomers ) {
+    .get(CheckAlreadyLoggedIn, function (req, res) {
+      Customer.find({}, function (err, allCustomers) {
         res.render('customers/signup', {
           allCustomers: allCustomers,
           message: req.flash('signupMessage')
@@ -56,8 +49,6 @@ router.route('/signup')
       failureFlash: true
     }))
 
-
-
     // .post( function(req, res) {
     //
     //   var newCust = new Customer (req.body.newCustomer)
@@ -68,7 +59,7 @@ router.route('/signup')
     //   })
     //   res.redirect('/customers/login')
 
-        //old code for creating a new Customer object before saving into Mongo DB per above newCust.save()
+        // old code for creating a new Customer object before saving into Mongo DB per above newCust.save()
         // var newCust = new Customer({
         //     name: req.body.newCustomer.name,
         //     local: {
@@ -80,7 +71,6 @@ router.route('/signup')
         //     phoneNumber: req.body.newCustomer.phone,
         // })
     // })
-
 
 // router.get('/signup', function (req, res) {
 //   res.render('customers/signup')
@@ -106,158 +96,177 @@ router.route('/signup')
 //     res.redirect('/customers/login')
 // })
 
+router.route('/login')
 
-router.route ('/login')
-
-    .get ( function (req, res) {
-        res.render( 'customers/login', { message: req.flash('loginMessage') } )
+    .get(function (req, res) {
+      res.render('customers/login', { message: req.flash('loginMessage') })
     })
 
     .post(passport.authenticate('local-login', {
       successRedirect: '/customers/profile',
-      failureRedirect: '/customers/login',
+      failureRedirect: '/customers/signup',
       failureFlash: true
     }))
 
-
 router.get('/profile', function (req, res) {
     // res.send(req.user.id)
-    console.log('I am now showing req.user : ' + req.user)
-    res.render('customers/profile', {
-      customerData: req.user,
-      message: req.flash('loginMessage'),
-    })
+  console.log('I am now showing req.user : ' + req.user)
+  res.render('customers/profile', {
+    customerData: req.user,
+    message: req.flash('loginMessage')
+  })
 })
 
 router.get('/product', function (req, res) {
-    console.log('Shopping now')
+  console.log('Shopping now')
 
-    Product.find( {}, function (err, allProduct ) {
-
-      // console.log('all products are: '+ allProduct.productName)
-
-      res.render('customers/product', {
-        allProducts: allProduct,
-      })
+  Product.find({}, function (err, allProduct) {
+    // console.log('all products are: '+ allProduct.productName)
+    // res.send(allProduct)
+    res.render('customers/product', {
+      allProducts: allProduct
     })
+  })
 })
 
-router.get('/productPage', function (req, res) {
+router.get('/productpage', function (req, res) {
   // console.log(req.body)
   // console.log(res.params)
-  res.render('customers/productPage')
+  res.render('customers/productpage')
 })
 
+router.post('/cart', function (req, res) {
+  console.log('yyyy USERRRRRRR ' + req.user.id)
 
-router.post('/cart', function(req, res) {
+  Cart.find({customerId: req.user.id}).remove().exec()
 
-    // console.log('yyyy ' + req.user.id)
-    console.log('tttttt' + req.body.quantityOrdered)
+    // Cart.find( {customerId: req.user.id}, function(err, docs){
+    //     if (err) throw new Error(err)
+    //     docs.remove()
+    //     console.log("Delete all the user's old carts")
+    // })
+
+    // FIX THE MULTIPLE CART LOGIC BELOW
+    // Cart.findOne( {customerId: req.user.id}, function(err, cart){
+    //     if (err) {
+    //
+    //       console.log('if loop here - there is no cart for this user')
+    //       next()
+    //     }
+    //     else {
+    //     // console.log("You already have a cart " + cart.id + " !!!!!!")
+    //     // console.log("ZZZZZZZ" + typeof(cart.id))
+    //     console.log('else loop - user already have a cart')
+    //     res.render('customers/cart')
+    //
+    //     }
+    // })
+
+  console.log('tttttt' + req.body.quantityOrdered)
     // console.log('this is my product id ' + req.body.productId)
     // console.log('this is my req body ' + req.body)
 
-    var productArrayOfObjects = []
-    var totalAmount = 0
-    var quantityArray =[]
-    var productIdArray = []
-    var unitPriceArray = []
+  var productArrayOfObjects = []
+  var totalAmount = 0
+  var quantityArray = []
+  var productIdArray = []
+  var unitPriceArray = []
 
+  for (var j = 0; j < req.body.productId.length; j++) {
+    console.log(req.body.productId[j])
+    productIdArray.push(req.body.productId[j])
+    console.log('this is my productIdArrray ' + productIdArray)
+    console.log(typeof (productIdArray))
 
-    for (var j=0; j<req.body.productId.length; j++) {
+    console.log('rrrrrrrr' + req.body.quantityOrdered[j])
+    console.log('sssssss ' + typeof (req.body.quantityOrdered[j]))
 
-      console.log(req.body.productId[j])
-      productIdArray.push(req.body.productId[j])
-      console.log('this is my productIdArrray ' + productIdArray)
-      console.log(typeof(productIdArray))
-
-
-      console.log("rrrrrrrr" + req.body.quantityOrdered[j])
-      console.log('sssssss ' + typeof(req.body.quantityOrdered[j]))
-
-
-      if ( req.body.quantityOrdered[j] === '' ) {
-          req.body.quantityOrdered[j] = 0
-      }
-
-      quantityArray.push(parseInt(req.body.quantityOrdered[j]))
-
-    }
-    console.log('qty array ' + quantityArray)
-
-
-    for (var i=0; i<req.body.productId.length; i++) {
-
-        var item = {
-          productId: req.body.productId[i],
-          quantityOrdered: req.body.quantityOrdered[i]
-        }
-        productArrayOfObjects.push(item);
+    if (req.body.quantityOrdered[j] === '') {
+      req.body.quantityOrdered[j] = 0
     }
 
-    console.log('productArrayOfObjects '  + productArrayOfObjects)
+    quantityArray.push(parseInt(req.body.quantityOrdered[j]))
+  }
+  console.log('qty array ' + quantityArray)
 
+  for (var i = 0; i < req.body.productId.length; i++) {
+    var item = {
+      productId: req.body.productId[i],
+      quantityOrdered: req.body.quantityOrdered[i]
+    }
+    productArrayOfObjects.push(item)
+  }
 
-    Product.find( {'_id': {'$in': productIdArray} }, function(err, productData){
+  console.log('productArrayOfObjects ' + productArrayOfObjects)
 
-        console.log('productData ' + productData)
+  Product.find({'_id': {'$in': productIdArray} }, function (err, productData) {
+    console.log('productData ' + productData)
 
-        productData.forEach(function(productData) {
-
-          console.log('unit price ' + productData.unitPrice)
-          unitPriceArray.push(productData.unitPrice)
-        })
+    productData.forEach(function (productData) {
+      console.log('unit price ' + productData.unitPrice)
+      unitPriceArray.push(productData.unitPrice)
+    })
 
         // console.log('within datatbase unitPriceArray ' + unitPriceArray)
 
-        for (var i = 0; i<quantityArray.length; i++) {
-          totalAmount += (quantityArray[i]*unitPriceArray[i])
-        }
+    for (var i = 0; i < quantityArray.length; i++) {
+      totalAmount += (quantityArray[i] * unitPriceArray[i])
+    }
         // totalAmount += (productData.unitPrice * quantityArray)
-        console.log('1111 total amount now '+ totalAmount)
+    console.log('1111 total amount now ' + totalAmount)
 
-
-        var newCart = new Cart ({
-            totalSpend: totalAmount,
-            customerId: req.user.id,
-            productOrdered: productArrayOfObjects,
-        })
-        console.log('newCart is ' + newCart)
-        newCart.save(function (err) {
-                if (err) throw new Error(err)
-        })
-
+    var newCart = new Cart({
+      totalSpend: totalAmount,
+      customerId: req.user.id,
+      productOrdered: productArrayOfObjects
     })
+    console.log('newCart is ' + newCart)
+    newCart.save(function (err, cart) {
+      if (err) throw new Error(err)
 
+      Cart.findById(cart.id)
+              .populate('productOrdered.productId')
+              .exec(function (err, cart) {
+                console.log('=========', JSON.stringify(cart))
+                res.render('customers/cart', {
+                  cartData: cart
+                })
+              })
+    })
   })
-
+})
 
 router.get('/logout', function (req, res) {
-    req.logout()
-    console.log('Logging customer out')
-    res.redirect('/customers/login')
+  req.logout()
+  console.log('Logging customer out')
+  res.redirect('/customers/login')
 })
 
 router.delete('/delete/:id', function (req, res) {
+  Customer.findByIdAndRemove(req.params.id, function (err, customerDelete) {
+    if (err) throw new Error(err)
 
-    Customer.findByIdAndRemove(req.params.id, function(err, customerDelete){
+    console.log(req.params.id)
 
-      if (err) throw new Error(err)
-
-      console.log(req.params.id)
-
-      console.log('Deleting customer account')
-      res.redirect('/customers/signup')
-    })
+    console.log('Deleting customer account')
+    res.redirect('/customers/signup')
+  })
 })
 
+router.post('/search', function (req, res) {
+    console.log('Searching now')
 
+    Product.find({productName: req.body.query}, function (err, foundProduct) {
 
-router.get('/error', function (req, res) {
-    res.render('customers/error')
+      console.log('search products are: '+ req.body.query)
+      console.log('found products are: '+ foundProduct)
+
+      res.render('customers/searchresults', {
+        foundProducts: foundProduct
+      })
+
+  })
 })
-
-
-
     // .post( function(req, res) {
     //     var cust = req.body.customer
     //     console.log (cust)
@@ -282,7 +291,6 @@ router.get('/error', function (req, res) {
     //       }
     //     })
     // })
-
 
 // router.get('/login', function (req, res) {
 //   res.render('customers/login')
@@ -312,6 +320,5 @@ router.get('/error', function (req, res) {
 //       }
 //     })
 // })
-
 
 module.exports = router

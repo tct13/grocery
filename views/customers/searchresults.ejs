@@ -1,5 +1,4 @@
-<h2>Online Order</h2>
-<br>
+<h2>Search Results</h2>
 
 <table class="table">
 
@@ -12,7 +11,7 @@
 
 <form class="navbar-form navbar-left" method="POST" action="/customers/cart">
 
-<% allProducts.forEach(function(products) { %>
+<% foundProducts.forEach(function(products) { %>
   <tr>
       <td> <%= products.productName %> </td>
       <td> <%= products.unitPrice %> </td>
@@ -24,8 +23,8 @@
   <input type="hidden" name="productId" value=<%=products._id%>>
 <% }) %>
 
-  <tr> </tr>
-  <tr> <input type="submit" value='Save My Order to Cart'> </tr>
+<tr> </tr>
+<tr> <input type="submit" value='Save My Order to Cart'> </tr>
 
 </form>
 

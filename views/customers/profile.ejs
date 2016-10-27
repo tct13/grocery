@@ -1,4 +1,4 @@
-<h1>Customer Profile Page</h1>
+<h2>Customer Profile</h2>
 
 <% if(message.length > 0) { %>
   <h3>Flash Message Found</h3>
@@ -28,18 +28,11 @@
 
  </table>
 
-  <br>
-  <a href="/customers/product">Shop Now</a>
+ <form method="POST" action="/customers/delete/<%=customerData.id%>" enctype="application/x-www-form-urlencoded">
+   <input type="hidden" name="_method" value="DELETE">
+   <button type="submit">Delete My Account</button>
+ </form>
 
   <br>
-  <a href="/customers/cart">See My Cart</a>
-
+  <a href="/customers/product"> <h3>Shop HERE to shop!<h3> </a>
   <br>
-  <a href="/customers/logout">Logout</a>
-
-  <br>
-
-  <form method="POST" action="/customers/delete/<%=customerData.id%>" enctype="application/x-www-form-urlencoded">
-    <input type="hidden" name="_method" value="DELETE">
-    <button type="submit">Delete My Account</button>
-  </form>
