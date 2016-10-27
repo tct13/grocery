@@ -160,7 +160,7 @@ router.post('/cart', function(req, res) {
     var totalAmount = 0
     var quantityArray =[]
     var productIdArray = []
-    // var priceArray = []
+    var unitPriceArray = []
 
 
     for (var j=0; j<req.body.productId.length; j++) {
@@ -170,32 +170,19 @@ router.post('/cart', function(req, res) {
       console.log('this is my productIdArrray ' + productIdArray)
       console.log(typeof(productIdArray))
 
+
+      console.log("rrrrrrrr" + req.body.quantityOrdered[j])
+      console.log('sssssss ' + typeof(req.body.quantityOrdered[j]))
+
+
+      if ( req.body.quantityOrdered[j] === '' ) {
+          req.body.quantityOrdered[j] = 0
+      }
+
       quantityArray.push(parseInt(req.body.quantityOrdered[j]))
-      console.log('qty array ' + quantityArray)
-      console.log(typeof(quantityArray[j]))
 
     }
-
-
-    Product.find( {'_id': {'$in': productIdArray} }, function(err, productData){
-
-      console.log('productData ' + productData)
-
-      productData.forEach(function(productData, quantityArray) {
-
-        console.log('unit price ' + productData.unitPrice)
-        console.log('xxxxxx qty array ' + quantityArray)
-        // quantityArray is not been picked up!!!
-
-        totalAmount += (productData.unitPrice * quantityArray)
-        console.log('total amount now '+ totalAmount)
-
-      })
-
-      // totalAmount += (quantityArray[j]*priceArray[j])
-      // console.log('total amount now '+ totalAmount)
-
-    })
+    console.log('qty array ' + quantityArray)
 
 
     for (var i=0; i<req.body.productId.length; i++) {
@@ -209,15 +196,38 @@ router.post('/cart', function(req, res) {
 
     console.log('productArrayOfObjects '  + productArrayOfObjects)
 
-    var newCart = new Cart ({
-        totalSpend: totalAmount,
-        customerId: req.user.id,
-        productOrdered: productArrayOfObjects,
+
+    Product.find( {'_id': {'$in': productIdArray} }, function(err, productData){
+
+        console.log('productData ' + productData)
+
+        productData.forEach(function(productData) {
+
+          console.log('unit price ' + productData.unitPrice)
+          unitPriceArray.push(productData.unitPrice)
+        })
+
+        // console.log('within datatbase unitPriceArray ' + unitPriceArray)
+
+        for (var i = 0; i<quantityArray.length; i++) {
+          totalAmount += (quantityArray[i]*unitPriceArray[i])
+        }
+        // totalAmount += (productData.unitPrice * quantityArray)
+        console.log('1111 total amount now '+ totalAmount)
+
+
+        var newCart = new Cart ({
+            totalSpend: totalAmount,
+            customerId: req.user.id,
+            productOrdered: productArrayOfObjects,
+        })
+        console.log('newCart is ' + newCart)
+        newCart.save(function (err) {
+                if (err) throw new Error(err)
+        })
+
     })
-    console.log('newCart is ' + newCart)
-    newCart.save(function (err) {
-            if (err) throw new Error(err)
-    })
+
   })
 
 
@@ -238,9 +248,6 @@ router.delete('/delete/:id', function (req, res) {
       console.log('Deleting customer account')
       res.redirect('/customers/signup')
     })
-
-
-
 })
 
 
