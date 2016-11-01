@@ -8,17 +8,30 @@ var Product = require('../models/product')
 var Cart = require('../models/cart')
 
 // below is the helper function to check that the customer is already logged in on the customer/signup page
-function CheckAlreadyLoggedIn (req, res, next) {
+function checkAlreadyLoggedIn (req, res, next) {
   if (req.isAuthenticated()) {
     req.flash('signupMessage', 'You have already logged in!')
 
-    console.log(' I am done with CheckAlreadyLoggedIn')
+    console.log(' I am done with checkAlreadyLoggedIn')
 
     return res.redirect('/customers/profile')
   } else {
     return next()
   }
 }
+
+
+function isLoggedIn (req, res, next) {
+
+   // if user is authenticated in the session, carry on
+   if (req.isAuthenticated())
+     return next()
+
+   // if they aren't redirect them to the login page
+   res.redirect('/customers/login')
+}
+
+
 
 router.get('/', function (req, res) {
   // Customer.find({}, function (err, allCustomers) {
@@ -32,7 +45,7 @@ router.get('/', function (req, res) {
 
 router.route('/signup')
 
-    .get(CheckAlreadyLoggedIn, function (req, res) {
+    .get(checkAlreadyLoggedIn, function (req, res) {
       Customer.find({}, function (err, allCustomers) {
         res.render('customers/signup', {
           allCustomers: allCustomers,
@@ -129,7 +142,7 @@ router.get('/product', function (req, res) {
 
 
 
-router.post('/cart', function (req, res) {
+router.post('/cart', isLoggedIn, function (req, res) {
 
   // console.log('yyyy USERRRRRRR ' + req.user.id)
 
@@ -158,8 +171,25 @@ router.post('/cart', function (req, res) {
     // })
 
   console.log('tttttt ' + req.body.quantityOrdered)
-    // console.log('this is my product id ' + req.body.productId)
+  console.log('this is my product id ' + req.body.productId)
+  console.log( typeof(req.body.productId) )
     // console.log('this is my req body ' + req.body)
+
+
+    if ( typeof(req.body.productId) == 'string' ) {
+      console.log("kiss my ass")
+      // req.body.productId = req.body.productId.toString()
+      // var obj = {
+      //     productId: req.body.productId
+      // }
+      // req.body.productId = obj
+      var temp = JSON.stringify(req.body.productId)
+      req.body.productId = JSON.parse('{"productId":"temp"}')
+    }
+
+      console.log( typeof(req.body.productId) )
+
+      console.log('NOWWWWW this is my product id ' + req.body.productId)
 
   var productArrayOfObjects = []
   var totalAmount = 0
@@ -168,7 +198,7 @@ router.post('/cart', function (req, res) {
   var unitPriceArray = []
 
   for (var j = 0; j < req.body.productId.length; j++) {
-    console.log(req.body.productId[j])
+    console.log('fffff this is req body ' + req.body.productId[j])
     productIdArray.push(req.body.productId[j])
     console.log('this is my productIdArrray ' + productIdArray)
     console.log(typeof (productIdArray))
@@ -222,13 +252,13 @@ router.post('/cart', function (req, res) {
       if (err) throw new Error(err)
 
       Cart.findById(cart.id)
-              .populate('productOrdered.productId')
-              .exec(function (err, cart) {
-                console.log('=========', JSON.stringify(cart))
-                res.render('customers/cart', {
+          .populate('productOrdered.productId')
+          .exec(function (err, cart) {
+              console.log('=========', JSON.stringify(cart))
+              res.render('customers/cart', {
                   cartData: cart
-                })
               })
+          })
     })
   })
 })
