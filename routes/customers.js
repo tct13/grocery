@@ -21,15 +21,13 @@ function CheckAlreadyLoggedIn (req, res, next) {
 }
 
 router.get('/', function (req, res) {
-  Customer.find({}, function (err, allCustomers) {
-    if (err) throw new Error(err)
+  // Customer.find({}, function (err, allCustomers) {
+  //   if (err) throw new Error(err)
+  //
+  //   console.log(allCustomers)
 
-    console.log(allCustomers)
-
-    res.render('customers/index', {
-      allCustomers: allCustomers
-    })
-  })
+    res.render('customers/index')
+  // })
 })
 
 router.route('/signup')
@@ -129,14 +127,11 @@ router.get('/product', function (req, res) {
   })
 })
 
-router.get('/productpage', function (req, res) {
-  // console.log(req.body)
-  // console.log(res.params)
-  res.render('customers/productpage')
-})
+
 
 router.post('/cart', function (req, res) {
-  console.log('yyyy USERRRRRRR ' + req.user.id)
+
+  // console.log('yyyy USERRRRRRR ' + req.user.id)
 
   Cart.find({customerId: req.user.id}).remove().exec()
 
@@ -162,7 +157,7 @@ router.post('/cart', function (req, res) {
     //     }
     // })
 
-  console.log('tttttt' + req.body.quantityOrdered)
+  console.log('tttttt ' + req.body.quantityOrdered)
     // console.log('this is my product id ' + req.body.productId)
     // console.log('this is my req body ' + req.body)
 
@@ -190,11 +185,13 @@ router.post('/cart', function (req, res) {
   console.log('qty array ' + quantityArray)
 
   for (var i = 0; i < req.body.productId.length; i++) {
-    var item = {
-      productId: req.body.productId[i],
-      quantityOrdered: req.body.quantityOrdered[i]
+    if (req.body.quantityOrdered[i] != 0) {
+        var item = {
+          productId: req.body.productId[i],
+          quantityOrdered: req.body.quantityOrdered[i]
+        }
+        productArrayOfObjects.push(item)
     }
-    productArrayOfObjects.push(item)
   }
 
   console.log('productArrayOfObjects ' + productArrayOfObjects)
@@ -236,11 +233,26 @@ router.post('/cart', function (req, res) {
   })
 })
 
+
 router.get('/logout', function (req, res) {
   req.logout()
   console.log('Logging customer out')
   res.redirect('/customers/login')
 })
+
+
+router.get('/:id', function (req, res) {
+
+  console.log('Shopping for individual products now')
+
+  Product.findById(req.params.id, function (err, product) {
+    console.log('One product selected: '+ product.productName + " " + product._id)
+    res.render('customers/individualProduct', {
+      oneProduct: product
+    })
+  })
+})
+
 
 router.delete('/delete/:id', function (req, res) {
   Customer.findByIdAndRemove(req.params.id, function (err, customerDelete) {

@@ -53,7 +53,10 @@ app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
-
+app.use(function (req, res, next) {
+   res.locals.user = req.user
+   next()
+})
 
 
 app.use(methodOverride(function(req, res){

@@ -1,17 +1,17 @@
-<h2>Online Order</h2>
+<h2>Individual Product Online Order</h2>
 <br>
 
 <% if (!user) { %>
   <table class="table">
     <tr> <h4>You are not logged in or have not signed up.</h4> </tr>
-    <br>
     <tr> <a href="/customers/login">Login Here</a> </tr>
-    <br>
+
     <tr> <a href="/customers/signup">Signup Here</a> </tr>
 <% } else { %>
     <h4>You are logged in.</h4>
     <br>
 <% } %>
+
 
 <table class="table">
 
@@ -19,24 +19,19 @@
     <th>Product Name</th>
     <th>Unit Price</th>
     <th>Quantity to Order</th>
-    <th>Individual Product Description and Order</th>
   </tr>
 
 <form class="navbar-form navbar-left" method="POST" action="/customers/cart">
 
-<% allProducts.forEach(function(products) { %>
-  <tr>
-      <td> <%= products.productName %> </td>
-      <td> <%= products.unitPrice %> </td>
 
+  <tr>
+      <td> <%= oneProduct.productName %> </td>
+      <td> <%= oneProduct.unitPrice %> </td>
       <td>
         <input type="number" name="quantityOrdered" min="0" placeholder="Quantity to order">
       </td>
-
-      <td> <a href="/customers/<%= products.id %>">View <%= products.productName %> Product Description</a> </td>
   </tr>
-  <input type="hidden" name="productId" value=<%=products._id%>>
-<% }) %>
+  <input type="hidden" name="productId" value=<%=oneProduct._id%>>
 
   <tr> </tr>
   <tr> <input type="submit" value="Save My Order to Cart"> </tr>

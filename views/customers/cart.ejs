@@ -1,5 +1,4 @@
 <h2>Review Cart and Submit Order for Payment</h2>
-
 <br>
 
 <table class="table">
@@ -7,25 +6,30 @@
   <tr>
     <th>Product Name</th>
     <th>Unit Price</th>
-    <th>State Quantity You Like to Order</th>
-    <th></th>
+    <th>Quantity Ordered</th>
+    <th>Total Price</th>
   </tr>
 
 <form class="navbar-form navbar-left" method="POST" action="/customers/cart">
 
 <% cartData.productOrdered.forEach(function(products) { %>
   <tr>
-      <td> <%= products.productName %> </td>
-      <td> <%= products.unitPrice %> </td>
+      <td> <%= products.productId.productName %> </td>
+      <td> <%= products.productId.unitPrice %> </td>
       <td>
-        <input type="number" name="quantityOrdered" min="0" placeholder="Quantity to order">
-      </td>
-      <td> <a href="/customers/productPage">View Product Description</a> </td>
+        <input type="number" name="quantityOrdered" min="0" value="<%=products.quantityOrdered%>"> </td>
+      <td> <%= products.productId.unitPrice * products.quantityOrdered %> </td>
   </tr>
-  <input type="hidden" name="productId" value=<%=products._id%>>
+
+  <input type="hidden" name="productId" value=<%=products.productId._id%>>
 <% }) %>
 
-  <tr> </tr>
+  <tr>
+      <td> <strong> Total Price </strong> </td>
+      <td> </td>
+      <td> </td>
+      <td> <strong> xxx </strong> </td>
+  </tr>
   <tr> <input type="submit" value='Submit Order and Make Payment'> </tr>
 
 </form>

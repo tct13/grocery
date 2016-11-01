@@ -25,10 +25,15 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/customers/login">Login</a></li>
-            <li><a href="/customers/profile">Your Profile</a></li>
-            <li><a href="/customers/cart">Your Cart</a></li>
-            <li><a href="/customers/logout">Logout</a></li>
+
+            <% if (!user) { %>
+                <li> <a href="/customers/login">Login</a> </li>
+                <li> <a href="/customers/signup">Signup</a> </li>
+            <% } else { %>
+                <li><a href="/customers/profile">Your Profile</a></li>
+                <li><a href="/customers/logout">Logout</a></li>
+            <% } %>
+
             <li><a href="#">Help</a></li>
           </ul>
           <form class="navbar-form navbar-right" method="POST" action="/customers/search">
