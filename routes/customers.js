@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var passport = require('passport')
-// var mongoose = require('mongoose')
+var mongoose = require('mongoose')
 
 var Customer = require('../models/customer')
 var Product = require('../models/product')
@@ -109,7 +109,7 @@ router.route('/signup')
 
 router.route('/login')
 
-    .get(function (req, res) {
+    .get(checkAlreadyLoggedIn, function (req, res) {
       res.render('customers/login', { message: req.flash('loginMessage') })
     })
 
@@ -139,6 +139,28 @@ router.get('/product', function (req, res) {
     })
   })
 })
+
+
+router.get('/cart', isLoggedIn, function (req, res) {
+  console.log('showing cart now')
+
+  Cart.findOne({customerId: req.user.id}, function (err, cart) {
+      console.log('Cart ID is '+ cart._id)
+
+      Cart.findById(cart.id)
+        .populate('productOrdered.productId')
+        .exec(function (err, cart) {
+            console.log('=========', JSON.stringify(cart))
+            res.render('customers/cart', {
+                cartData: cart
+            })
+        })
+
+  })
+
+
+})
+
 
 
 
@@ -177,19 +199,25 @@ router.post('/cart', isLoggedIn, function (req, res) {
 
 
     if ( typeof(req.body.productId) == 'string' ) {
-      console.log("kiss my ass")
-      // req.body.productId = req.body.productId.toString()
+      console.log("Coooollllllllllllll")
+    //   // req.body.productId = req.body.productId.toString()
       // var obj = {
       //     productId: req.body.productId
       // }
       // req.body.productId = obj
-      var temp = JSON.stringify(req.body.productId)
-      req.body.productId = JSON.parse('{"productId":"temp"}')
+    //   var temp = JSON.stringify(req.body.productId)
+    //   req.body.productId = JSON.parse('{"productId":"temp"}')
+
+      var objectId = mongoose.Types.ObjectId(req.body.productId)
+      req.body.productId = objectId
+
     }
 
       console.log( typeof(req.body.productId) )
 
-      console.log('NOWWWWW this is my product id ' + req.body.productId)
+      console.log('NOWWWWW this is my product id length ' + req.body.productId.length)
+
+      console.log('NOWWWWW this is my order number ' + req.body.quantityOrdered)
 
   var productArrayOfObjects = []
   var totalAmount = 0
